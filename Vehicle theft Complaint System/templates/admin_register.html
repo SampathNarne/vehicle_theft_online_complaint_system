@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Registration{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Admin Registration</h1>
+    <p>Create your admin account to manage complaints and oversee the platform.</p>
+</header>
+
+<!-- Flash message section -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<section class="registration-form">
+    <form method="POST" id="registration-form">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" id="phone_number" required>
+
+        <label for="officer_type">Officer Type:</label>
+        <select name="officer_type" id="officer_type" required>
+            <option value="Selectoption">Select Option</option>
+            <option value="SI">Sub-Inspector (SI)</option>
+            <option value="SP">Superintendent of Police (SP)</option>
+            <option value="CI">Circle Inspector (CI)</option>
+            <option value="Constable">Police Constable</option>
+            <option value="Inspector">Police Inspector</option>
+            <option value="ACP">Assistant Commissioner of Police (ACP)</option>
+            <option value="DCP">Deputy Commissioner of Police (DCP)</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <label for="id_number">ID Number:</label>
+        <input type="text" name="id_number" id="id_number" required>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="password" name="confirm_password" id="confirm_password" required>
+
+        <div id="password-error" style="color: red; display: none;">Passwords do not match!</div>
+
+        <label for="date_of_joining">Date of Joining:</label>
+        <input type="date" name="date_of_joining" id="date_of_joining" required>
+
+        <button type="submit" class="cta-button">Register</button>
+    </form>
+</section>
+
+<script>
+    // Get references to the form elements
+    const form = document.getElementById('registration-form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const errorMessage = document.getElementById('password-error');
+
+    // Add an event listener to validate passwords before submitting the form
+    form.addEventListener('submit', function(event) {
+        // Check if passwords match
+        if (password.value !== confirmPassword.value) {
+            event.preventDefault();  // Prevent form submission
+            errorMessage.style.display = 'block';  // Display the error message
+        } else {
+            errorMessage.style.display = 'none';  // Hide the error message if passwords match
+        }
+    });
+</script>
+
+{% endblock %}

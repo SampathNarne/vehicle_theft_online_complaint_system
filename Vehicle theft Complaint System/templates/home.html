@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Vehicle Theft Online Complaint System{% endblock %}
+
+{% block content %}
+<header>
+    <div class="hero">
+        <h1>Protect Your Vehicle: Report Theft Easily</h1>
+        <p>Your trusted platform for reporting vehicle thefts and tracking cases in real-time.</p>
+        {% if 'username' in session %}
+            <div class="cta-buttons">
+                <a href="{{ url_for('submit_complaint') }}" class="cta-button">Submit a Complaint</a>
+                <a href="{{ url_for('user_dashboard') }}" class="cta-button">Go to Dashboard</a>
+
+            </div>
+        {% else %}
+            <p>Please log in to submit a complaint or access your dashboard.</p>
+        {% endif %}
+    </div>
+</header>
+
+<section class="authentication">
+    <h2>Get Started</h2>
+    <div class="auth-options">
+        {% if 'username' in session %}
+            <!-- User is logged in, do not show Register Now option -->
+        {% else %}
+            <div class="auth-item">
+                <h3>Login</h3>
+                <p>Already have an account? Login to track your complaints or file a new one.</p>
+                <a href="{{ url_for('login') }}" class="cta-button">Login</a>
+            </div>
+            <div class="auth-item">
+                <h3>Register</h3>
+                <p>New to our platform? Register to submit and manage your complaints.</p>
+                <a href="{{ url_for('register') }}" class="cta-button">Register</a>
+            </div>
+            <div class="auth-item">
+                <h3>Admin Access</h3>
+                <p>Admins can log in here to manage all complaints and monitor the system.</p>
+                <a href="{{ url_for('admin_login') }}" class="cta-button admin-button">Admin Login</a>
+            </div>
+            <div class="auth-item">
+                <h3>Admin Registration</h3>
+                <p>Are you an admin? Register here to manage complaints and oversee the platform.</p>
+                <a href="{{ url_for('admin_register') }}" class="cta-button admin-button">Admin Register</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="features">
+    <h2>Why Use Our Platform?</h2>
+    <div class="feature-grid">
+        <div class="feature-item">
+            <img src="https://www.tcf.org.nz/wp-content/uploads/Submission-1.png" alt="Fast Submission">
+            <h3>Fast Submission</h3>
+            <p>Submit your vehicle theft complaint in just a few minutes.</p>
+        </div>
+        <div class="feature-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqJi2iCxnK3nH4fNX_B8LeFRhouMK-OHtqgg&s" alt="Real-Time Updates">
+            <h3>Real-Time Updates</h3>
+            <p>Track the status of your case with live updates and notifications.</p>
+        </div>
+        <div class="feature-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnvFnqdQUZfkMOt3MbjYTwvHpT4z4vqk8FLw&s" alt="Secure Platform">
+            <h3>Secure Platform</h3>
+            <p>Your personal and vehicle information is kept safe with us.</p>
+        </div>
+    </div>
+</section>
+
+<section class="testimonial">
+    <h2>Success Stories</h2>
+    <p>"Thanks to this system, I was able to report my stolen car quickly, and the authorities recovered it in just a week!" – John Doe</p>
+    <p>"The online complaint process was fast and secure. I appreciate the real-time updates!" – Jane Smith</p>
+</section>
+
+<section class="cta">
+    <h2>Don't Wait, Act Now</h2>
+    {% if 'username' not in session %}
+        <!-- Show Register Now option only if user is not logged in -->
+        <div class="cta-buttons">
+            <a id="reg" href="{{ url_for('register') }}" class="cta-button">Register Now</a>
+            <a href="{{ url_for('admin_register') }}" class="cta-button admin-button">Admin Register</a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="support" id="support">
+    <h2>Contact Support</h2>
+    <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
+    <ul>
+        <li>Email: <a href="mailto:support@vehiclecomplaints.com">support@vehiclecomplaints.com</a></li>
+        <li>Phone: +1-800-123-4567</li>
+    </ul>
+</section>
+{% endblock %}
