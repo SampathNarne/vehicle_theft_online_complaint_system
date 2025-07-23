@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Complaint Submitted{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-header">
+            <i class="fas fa-check-circle"></i>
+            <h2>Complaint Submitted Successfully</h2>
+            <p>Your vehicle theft report has been recorded. An officer will review it shortly.</p>
+        </div>
+
+        <div class="success-details">
+            <h3>Reference Details</h3>
+            <ul class="reference-list">
+                <li><strong>Complaint ID:</strong> #{{ complaint.id }}</li>
+                <li><strong>Vehicle:</strong> {{ complaint.vehicle_type|title }} – {{ complaint.vehicle_model }}</li>
+                <li><strong>Registration No.:</strong> {{ complaint.registration_number }}</li>
+                <li><strong>Status:</strong> <span class="status status-{{ complaint.status.lower() }}">{{ complaint.status }}</span></li>
+            </ul>
+        </div>
+
+        <div class="success-actions">
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+            </a>
+            <a href="{{ url_for('submit_complaint') }}" class="btn btn-secondary">
+                <i class="fas fa-plus-circle"></i> File Another Complaint
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-container{
+    max-width:600px;margin:2rem auto;padding:0 2rem
+}
+.success-card{
+    background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1);padding:2rem;text-align:center
+}
+.success-header i{font-size:3rem;color:#28a745;margin-bottom:1rem;display:block}
+.success-details{margin:2rem 0;text-align:left}
+.reference-list{list-style:none;padding:0}
+.reference-list li{margin-bottom:.5rem}
+.status{font-weight:600}
+.success-actions{display:flex;gap:1rem;justify-content:center}
+</style>
+{% endblock %}

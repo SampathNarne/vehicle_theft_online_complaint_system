@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Vehicle Theft Complaint System{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1><i class="fas fa-car"></i> Vehicle Theft Complaint System</h1>
+        <p>Report stolen vehicles quickly and securely. Track your case status in real-time.</p>
+        
+        <div class="cta-buttons">
+            <a href="{{ url_for('register') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Register Now
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <h2>Why Choose Our System?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Quick Reporting</h3>
+                <p>Submit your vehicle theft complaint in just a few minutes with our streamlined process.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Real-time Tracking</h3>
+                <p>Monitor the progress of your case with live updates and notifications from law enforcement.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure & Private</h3>
+                <p>Your personal information is protected with bank-level security and encryption.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="testimonials-section">
+    <div class="container">
+        <h2>Success Stories</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Thanks to this system, I was able to report my stolen car quickly, and the authorities recovered it in just a week!"</p>
+                    <div class="testimonial-author">
+                        <strong>- John Doe</strong>
+                        <span>Verified User</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The online complaint process was fast and secure. I received regular updates about my case status."</p>
+                    <div class="testimonial-author">
+                        <strong>- Jane Smith</strong>
+                        <span>Verified User</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">1,250+</div>
+                <div class="stat-label">Complaints Filed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">89%</div>
+                <div class="stat-label">Recovery Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support Available</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

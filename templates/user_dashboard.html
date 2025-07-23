@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Welcome, {{ session.username }}!</h1>
+        <a href="{{ url_for('submit_complaint') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Submit New Complaint
+        </a>
+    </div>
+    
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total }}</h3>
+                <p>Total Complaints</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.pending }}</h3>
+                <p>Pending</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon solved">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.solved }}</h3>
+                <p>Solved</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="complaints-section">
+        <h2><i class="fas fa-list"></i> Your Complaints</h2>
+        
+        {% if complaints %}
+            <div class="table-container">
+                <table class="complaints-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Vehicle</th>
+                            <th>Registration</th>
+                            <th>Theft Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for complaint in complaints %}
+                        <tr>
+                            <td>#{{ complaint.id }}</td>
+                            <td>
+                                <div class="vehicle-info">
+                                    <strong>{{ complaint.vehicle_type|title }}</strong><br>
+                                    <span class="vehicle-model">{{ complaint.vehicle_model }}</span>
+                                </div>
+                            </td>
+                            <td class="registration">{{ complaint.registration_number }}</td>
+                            <td>{{ complaint.theft_date }}</td>
+                            <td class="location">{{ complaint.theft_location }}</td>
+                            <td>
+                                <span class="status status-{{ complaint.status.lower() }}">
+                                    <i class="fas {% if complaint.status == 'Pending' %}fa-clock{% elif complaint.status == 'Solved' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                                    {{ complaint.status }}
+                                </span>
+                            </td>
+                            <td>{{ complaint.created_at[:10] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No complaints yet</h3>
+                <p>You haven't submitted any vehicle theft complaints.</p>
+                <a href="{{ url_for('submit_complaint') }}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> Submit Your First Complaint
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

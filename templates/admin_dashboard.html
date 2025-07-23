@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1><i class="fas fa-shield-alt"></i> Admin Control Panel</h1>
+            <p>Welcome, {{ session.username }} | Officer ID: {{ session.get('officer_id', 'N/A') }}</p>
+        </div>
+        <div class="admin-actions">
+            <a href="{{ url_for('admin_register') }}" class="btn btn-secondary">
+                <i class="fas fa-user-plus"></i> Add Admin
+            </a>
+            <button class="btn btn-info" onclick="exportData()">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-cards">
+        <div class="stat-card total">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total }}</h3>
+                <p>Total Complaints</p>
+                <small>All time</small>
+            </div>
+        </div>
+        
+        <div class="stat-card pending">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.pending }}</h3>
+                <p>Pending Review</p>
+                <small>Needs attention</small>
+            </div>
+        </div>
+        
+        <div class="stat-card solved">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.solved }}</h3>
+                <p>Cases Solved</p>
+                <small>Success rate: {{ "%.1f"|format((stats.solved / stats.total * 100) if stats.total > 0 else 0) }}%</small>
+            </div>
+        </div>
+        
+        <div class="stat-card efficiency">
+            <div class="stat-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ ((stats.solved / stats.total * 100) if stats.total > 0 else 0)|round(1) }}%</h3>
+                <p>Resolution Rate</p>
+                <small>Department efficiency</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Complaints Management Section -->
+    <div class="complaints-section">
+        <div class="section-header">
+            <h2><i class="fas fa-list"></i> Complaint Management</h2>
+            <div class="filters">
+                <select id="statusFilter" class="filter-select" onchange="filterComplaints()">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Solved">Solved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="Search complaints..." class="search-input" onkeyup="searchComplaints()">
+            </div>
+        </div>
+        
+        {% if complaints %}
+            <div class="table-container">
+                <table class="complaints-table admin-table" id="complaintsTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" onchange="selectAllComplaints()"></th>
+                            <th>ID</th>
+                            <th>User Details</th>
+                            <th>Vehicle Information</th>
+                            <th>Theft Details</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for complaint in complaints %}
+                        <tr data-status="{{ complaint.status.lower() }}" data-id="{{ complaint.id }}">
+                            <td><input type="checkbox" class="complaint-checkbox" value="{{ complaint.id }}"></td>
+                            <td class="complaint-id">#{{ complaint.id }}</td>
+                            <td>
+                                <div class="user-info">
+                                    <strong><i class="fas fa-user"></i> {{ complaint.username }}</strong>
+                                    <div class="contact-details">
+                                        <small><i class="fas fa-envelope"></i> {{ complaint.email }}</small>
+                                        <small><i class="fas fa-phone"></i> {{ complaint.mobile }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="vehicle-info">
+                                    <strong>{{ complaint.vehicle_type|title }}</strong>
+                                    <div class="vehicle-details">
+                                        <span class="model">{{ complaint.vehicle_model }}</span>
+                                        <span class="registration">{{ complaint.registration_number }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="theft-info">
+                                    <div class="theft-date">
+                                        <i class="fas fa-calendar"></i> {{ complaint.theft_date }}
+                                    </div>
+                                    <div class="theft-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ complaint.theft_location[:30] }}...
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status status-{{ complaint.status.lower() }}">
+                                    <i class="fas {% if complaint.status == 'Pending' %}fa-clock{% elif complaint.status == 'Solved' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                                    {{ complaint.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <select class="priority-select" data-complaint="{{ complaint.id }}">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </td>
+                            <td class="actions">
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin_update_status', complaint_id=complaint.id) }}" 
+                                       class="btn btn-sm btn-primary" title="Update Status">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-info" onclick="viewDetails({{ complaint.id }})" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" onclick="contactUser('{{ complaint.email }}')" title="Contact User">
+                                        <i class="fas fa-envelope"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bulk Actions -->
+            <div class="bulk-actions" id="bulkActions" style="display: none;">
+                <div class="bulk-controls">
+                    <span id="selectedCount">0 selected</span>
+                    <div class="bulk-buttons">
+                        <button class="btn btn-warning" onclick="bulkUpdateStatus('Pending')">
+                            <i class="fas fa-clock"></i> Mark Pending
+                        </button>
+                        <button class="btn btn-success" onclick="bulkUpdateStatus('Solved')">
+                            <i class="fas fa-check"></i> Mark Solved
+                        </button>
+                        <button class="btn btn-danger" onclick="bulkUpdateStatus('Rejected')">
+                            <i class="fas fa-times"></i> Mark Rejected
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No complaints found</h3>
+                <p>No vehicle theft complaints have been submitted yet.</p>
+                <div class="empty-actions">
+                    <button class="btn btn-primary" onclick="refreshDashboard()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Quick Stats and Analytics -->
+    <div class="analytics-section">
+        <div class="analytics-grid">
+            <div class="chart-container">
+                <h3>Weekly Complaint Trends</h3>
+                <canvas id="complaintsChart"></canvas>
+            </div>
+            <div class="recent-activity">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <i class="fas fa-plus-circle text-success"></i>
+                        <span>New complaint #{{ complaints[0].id if complaints else 'N/A' }} submitted</span>
+                        <small>2 minutes ago</small>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-edit text-warning"></i>
+                        <span>Complaint status updated</span>
+                        <small>15 minutes ago</small>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span>Case marked as solved</span>
+                        <small>1 hour ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin-specific JavaScript -->
+<script>
+// Filter complaints by status
+function filterComplaints() {
+    const filter = document.getElementById('statusFilter').value.toLowerCase();
+    const rows = document.querySelectorAll('#complaintsTable tbody tr');
+    
+    rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        if (!filter || status === filter) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Search complaints
+function searchComplaints() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#complaintsTable tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(input)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Select all complaints
+function selectAllComplaints() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.complaint-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateBulkActions();
+}
+
+// Update bulk actions visibility
+function updateBulkActions() {
+    const checkedBoxes = document.querySelectorAll('.complaint-checkbox:checked');
+    const bulkActions = document.getElementById('bulkActions');
+    const selectedCount = document.getElementById('selectedCount');
+    
+    if (checkedBoxes.length > 0) {
+        bulkActions.style.display = 'block';
+        selectedCount.textContent = `${checkedBoxes.length} selected`;
+    } else {
+        bulkActions.style.display = 'none';
+    }
+}
+
+// View complaint details
+function viewDetails(complaintId) {
+    // Implementation for viewing complaint details in modal
+    alert(`Viewing details for complaint #${complaintId}`);
+}
+
+// Contact user
+function contactUser(email) {
+    window.location.href = `mailto:${email}`;
+}
+
+// Export data
+function exportData() {
+    // Implementation for data export
+    alert('Exporting complaint data...');
+}
+
+// Refresh dashboard
+function refreshDashboard() {
+    location.reload();
+}
+
+// Bulk update status
+function bulkUpdateStatus(status) {
+    const checkedBoxes = document.querySelectorAll('.complaint-checkbox:checked');
+    const complaintIds = Array.from(checkedBoxes).map(cb => cb.value);
+    
+    if (complaintIds.length === 0) {
+        alert('Please select complaints to update.');
+        return;
+    }
+    
+    if (confirm(`Update ${complaintIds.length} complaints to ${status}?`)) {
+        // Implementation for bulk status update
+        alert(`Updated ${complaintIds.length} complaints to ${status}`);
+    }
+}
+
+// Add event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change listener to checkboxes
+    document.querySelectorAll('.complaint-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActions);
+    });
+});
+</script>
+{% endblock %}

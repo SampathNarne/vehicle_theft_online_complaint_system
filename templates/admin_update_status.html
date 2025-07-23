@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Complaint Status{% endblock %}
+
+{% block content %}
+<div class="update-status-container">
+    <div class="update-card">
+        <div class="update-header">
+            <i class="fas fa-edit"></i>
+            <h2>Update Complaint Status</h2>
+            <p>Complaint ID: #{{ complaint.id }}</p>
+        </div>
+        
+        <!-- Complaint Details Section -->
+        <div class="complaint-details">
+            <h3><i class="fas fa-info-circle"></i> Complaint Information</h3>
+            
+            <div class="details-grid">
+                <div class="detail-section">
+                    <h4><i class="fas fa-user"></i> User Information</h4>
+                    <div class="detail-item">
+                        <label>Name:</label>
+                        <span>{{ complaint.username }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Email:</label>
+                        <span>{{ complaint.email }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Contact:</label>
+                        <span>{{ complaint.contact_number }}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4><i class="fas fa-car"></i> Vehicle Information</h4>
+                    <div class="detail-item">
+                        <label>Type:</label>
+                        <span>{{ complaint.vehicle_type|title }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Model:</label>
+                        <span>{{ complaint.vehicle_model }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Registration:</label>
+                        <span class="registration-number">{{ complaint.registration_number }}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4><i class="fas fa-map-marker-alt"></i> Theft Information</h4>
+                    <div class="detail-item">
+                        <label>Date:</label>
+                        <span>{{ complaint.theft_date }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Location:</label>
+                        <span>{{ complaint.theft_location }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Current Status:</label>
+                        <span class="status status-{{ complaint.status.lower() }}">
+                            <i class="fas {% if complaint.status == 'Pending' %}fa-clock{% elif complaint.status == 'Solved' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                            {{ complaint.status }}
+                        </span>
+                    </div>
+                </div>
+                
+                {% if complaint.description %}
+                <div class="detail-section full-width">
+                    <h4><i class="fas fa-file-text"></i> Additional Details</h4>
+                    <div class="description-box">
+                        {{ complaint.description }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Status Update Form -->
+        <div class="status-update-section">
+            <h3><i class="fas fa-cog"></i> Update Status</h3>
+            
+            <form method="POST" class="status-form">
+                {{ csrf_token() }}
+                
+                <div class="form-group">
+                    <label for="status" class="form-label">New Status:</label>
+                    <select name="status" id="status" class="form-select status-select" required>
+                        <option value="Pending" {% if complaint.status == 'Pending' %}selected{% endif %}>
+                            <i class="fas fa-clock"></i> Pending Investigation
+                        </option>
+                        <option value="Solved" {% if complaint.status == 'Solved' %}selected{% endif %}>
+                            <i class="fas fa-check-circle"></i> Case Solved
+                        </option>
+                        <option value="Rejected" {% if complaint.status == 'Rejected' %}selected{% endif %}>
+                            <i class="fas fa-times-circle"></i> Case Rejected
+                        </option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin_notes" class="form-label">Admin Notes (Optional):</label>
+                    <textarea name="admin_notes" id="admin_notes" class="form-textarea" 
+                              placeholder="Add any notes about this status change..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="notify_user" checked>
+                        <span class="checkmark"></span>
+                        Notify user via email about status change
+                    </label>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-save"></i> Update Status
+                    </button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Action History -->
+        <div class="action-history">
+            <h3><i class="fas fa-history"></i> Action History</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker created">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>Complaint Submitted</h4>
+                        <p>Initial complaint filed by {{ complaint.username }}</p>
+                        <small>{{ complaint.created_at if complaint.created_at else 'N/A' }}</small>
+                    </div>
+                </div>
+                
+                {% if complaint.updated_at and complaint.updated_at != complaint.created_at %}
+                <div class="timeline-item">
+                    <div class="timeline-marker updated">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>Status Updated</h4>
+                        <p>Status changed to {{ complaint.status }}</p>
+                        <small>{{ complaint.updated_at }}</small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Admin-specific styles for status update page */
+.update-status-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.update-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.update-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.update-header i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.complaint-details {
+    padding: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.detail-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.detail-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-section h4 {
+    margin-bottom: 1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-item {
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.detail-item label {
+    font-weight: 600;
+    min-width: 120px;
+    color: #666;
+}
+
+.registration-number {
+    font-family: monospace;
+    background: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.description-box {
+    background: white;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-top: 0.5rem;
+}
+
+.status-update-section {
+    padding: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.status-select {
+    font-size: 1.1rem;
+    padding: 0.75rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.action-history {
+    padding: 2rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.timeline-marker.created {
+    background: #28a745;
+}
+
+.timeline-marker.updated {
+    background: #ffc107;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-left: 1rem;
+}
+
+.timeline-content h4 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.timeline-content small {
+    color: #666;
+}
+</style>
+{% endblock %}

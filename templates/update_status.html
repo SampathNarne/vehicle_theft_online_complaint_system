@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Complaint #{{ complaint.id }}{% endblock %}
+
+{% block content %}
+<div class="status-container">
+    <div class="status-card">
+        <div class="status-header">
+            <h2><i class="fas fa-info-circle"></i> Complaint #{{ complaint.id }}</h2>
+            <span class="status status-{{ complaint.status.lower() }}">
+                <i class="fas {% if complaint.status == 'Pending' %}fa-clock{% elif complaint.status == 'Solved' %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                {{ complaint.status }}
+            </span>
+        </div>
+
+        <div class="status-body">
+            <h3>Vehicle Details</h3>
+            <p><strong>Type:</strong> {{ complaint.vehicle_type|title }}</p>
+            <p><strong>Model:</strong> {{ complaint.vehicle_model }}</p>
+            <p><strong>Registration No.:</strong> {{ complaint.registration_number }}</p>
+
+            <h3>Theft Details</h3>
+            <p><strong>Date:</strong> {{ complaint.theft_date }}</p>
+            <p><strong>Location:</strong> {{ complaint.theft_location }}</p>
+
+            {% if complaint.description %}
+            <h3>Additional Notes</h3>
+            <div class="description-box">
+                {{ complaint.description }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="status-footer">
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.status-container{max-width:700px;margin:2rem auto;padding:0 2rem}
+.status-card{background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.status-header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:1.5rem;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center}
+.status-header h2{margin:0}
+.status-body{padding:2rem}
+.status-body h3{margin-top:1.5rem;margin-bottom:.75rem;color:#333}
+.description-box{background:#f8f9fa;padding:1rem;border-radius:6px;border:1px solid #ddd}
+.status-footer{padding:1.5rem;text-align:center;border-top:1px solid #eee}
+</style>
+{% endblock %}
+

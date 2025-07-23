@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Complaint{% endblock %}
+
+{% block content %}
+<div class="complaint-container">
+    <div class="complaint-card">
+        <div class="complaint-header">
+            <i class="fas fa-plus-circle"></i>
+            <h2>Submit Vehicle Theft Complaint</h2>
+            <p>Please provide accurate information about your stolen vehicle</p>
+        </div>
+        
+        <form method="POST" class="complaint-form">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-section">
+                <h3><i class="fas fa-car"></i> Vehicle Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form.vehicle_type.label(class="form-label") }}
+                        {{ form.vehicle_type(class="form-select") }}
+                        {% if form.vehicle_type.errors %}
+                            <div class="form-errors">
+                                {% for error in form.vehicle_type.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.vehicle_model.label(class="form-label") }}
+                        {{ form.vehicle_model(class="form-input", placeholder="e.g., Honda Civic, Toyota Camry") }}
+                        {% if form.vehicle_model.errors %}
+                            <div class="form-errors">
+                                {% for error in form.vehicle_model.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    {{ form.registration_number.label(class="form-label") }}
+                    {{ form.registration_number(class="form-input", placeholder="e.g., ABC-1234") }}
+                    {% if form.registration_number.errors %}
+                        <div class="form-errors">
+                            {% for error in form.registration_number.errors %}
+                                <span class="error-text">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3><i class="fas fa-map-marker-alt"></i> Theft Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form.theft_date.label(class="form-label") }}
+                        {{ form.theft_date(class="form-input") }}
+                        {% if form.theft_date.errors %}
+                            <div class="form-errors">
+                                {% for error in form.theft_date.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.contact_number.label(class="form-label") }}
+                        {{ form.contact_number(class="form-input") }}
+                        {% if form.contact_number.errors %}
+                            <div class="form-errors">
+                                {% for error in form.contact_number.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    {{ form.theft_location.label(class="form-label") }}
+                    {{ form.theft_location(class="form-input", placeholder="Street address, city, landmarks") }}
+                    {% if form.theft_location.errors %}
+                        <div class="form-errors">
+                            {% for error in form.theft_location.errors %}
+                                <span class="error-text">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description(class="form-textarea", placeholder="Additional details about the theft, suspicious activities, etc.") }}
+                    {% if form.description.errors %}
+                        <div class="form-errors">
+                            {% for error in form.description.errors %}
+                                <span class="error-text">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary btn-large") }}
+                <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
