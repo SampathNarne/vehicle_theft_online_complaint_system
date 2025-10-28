@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vehicle Theft Complaint System — Cheat Sheet</title>
+  <style>
+    body {font-family: Arial, Helvetica, sans-serif; margin: 28px; color: #111}
+    h1, h2 {color: #1a5a96}
+    pre {background:#f6f8fa; padding:12px; border-radius:6px; overflow:auto}
+    section {margin-bottom:18px}
+    .columns {display:flex; gap:24px}
+    .col {flex:1}
+    @media print { .columns {display:block} a[href]:after {content: " (" attr(href) ")"; font-size:10px} }
+  </style>
+</head>
+<body>
+  <h1>Vehicle Theft Complaint System — Cheat Sheet</h1>
+  <section>
+    <h2>Overview</h2>
+    <p>Project: Vehicle Theft Online Complaint System — register users, submit complaints, admin manages status.</p>
+    <p>Tech: Python (Flask), SQLite, Jinja2, WTForms, Flask-WTF, Flask-Bcrypt.</p>
+  </section>
+
+  <section>
+    <h2>Key files</h2>
+    <ul>
+      <li><code>app.py</code> — Flask app, routes, forms, DB helpers.</li>
+      <li><code>schema.sql</code> — database schema (users, complaints).</li>
+      <li><code>templates/*</code> — Jinja2 templates.</li>
+      <li><code>static/styles.css</code> — styles.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Important patterns</h2>
+    <div class="columns">
+      <div class="col">
+        <h3>Database helpers</h3>
+        <p><strong>connect_db()</strong>: returns sqlite3.Connection with dict-like rows, enables PRAGMA foreign_keys.</p>
+        <p><strong>query_db()</strong>: parameterized queries, supports commit and fetching one vs many, rolls back on error.</p>
+      </div>
+      <div class="col">
+        <h3>Auth & Forms</h3>
+        <p>Sessions store <code>user_id</code>, <code>username</code>, <code>is_admin</code>. Decorators protect routes.</p>
+        <p>WTForms defines forms and validators; Flask-WTF provides CSRF tokens.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Security checklist</h2>
+    <ul>
+      <li>Password hashing with bcrypt (use Argon2/passlib as alternatives).</li>
+      <li>Enable CSRF, use parameterized queries.</li>
+      <li>Set secure cookie flags and use server-side session store in production.</li>
+      <li>Sanitize/escape user content to prevent XSS; use CSP headers.</li>
+      <li>Rate-limit login attempts.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Top topics to study</h2>
+    <ol>
+      <li>Flask routing & request lifecycle</li>
+      <li>Sessions and auth</li>
+      <li>WTForms and server-side validation</li>
+      <li>SQL schema design and foreign keys</li>
+      <li>SQLite -> Postgres migration basics</li>
+      <li>Security: bcrypt, CSRF, XSS, SQLi</li>
+      <li>Containerization and deployment</li>
+      <li>Testing (pytest, Flask test client)</li>
+      <li>Accessibility in templates (a11y)</li>
+      <li>Monitoring, logging, health checks</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Quick commands (PowerShell)</h2>
+    <pre>python "app.py"
+
+# Convert MD -> PDF (pandoc + wkhtmltopdf):
+# pandoc CHEATSHEET.md -o CHEATSHEET.pdf --from markdown --pdf-engine wkhtmltopdf
+
+# Or open cheatsheet.html in browser and print to PDF</pre>
+  </section>
+
+  <section>
+    <h2>Interview tips</h2>
+    <ul>
+      <li>Explain trade-offs: why SQLite now, why Postgres later.</li>
+      <li>Be ready to write a small code change (pagination, index, or secure a route).</li>
+      <li>Use examples from code: point at `login_required`, `query_db`, `create_tables`.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Generated: auto — print-friendly.</p>
+  </footer>
+</body>
+</html>
